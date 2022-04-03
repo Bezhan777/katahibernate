@@ -1,25 +1,37 @@
 package jm.task.core.jdbc.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 public class Util {
     private static final String HOST = "jdbc:mysql://localhost:3306/mybase";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "rasengan1997";
     private static final String driverClass = "com.mysql.cj.jdbc.Driver";
-
-    public static Connection getConnection() {
-        Connection connection = null;
-
+    private static SessionFactory sessionFactory = null;
+    public static SessionFactory getConnection() {
         try {
-            Class.forName(driverClass);
-            connection = DriverManager.getConnection(HOST, USERNAME, PASSWORD);
-           connection.setAutoCommit(false);
-        } catch (SQLException | NullPointerException | ClassNotFoundException e) {
+            Configuration configuration = new Configuration()
+                    .setProperty("hibernate.connection.driver_class", driverClass)
+                    .setProperty("hibernate.connection.url", HOST)
+                    .setProperty("hibernate.connection.username", USERNAME)
+                    .setProperty("hibernate.connection.password", PASSWORD)
+                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                    .addAnnotatedClass(User.class);
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        } catch (Throwable e ) {
             System.out.println("error");
         }
-        return connection;
+        return sessionFactory;
+    }
+    public static void closeConnection() {
+        if (sessionFactory != null)
+            sessionFactory.close();
     }
 }

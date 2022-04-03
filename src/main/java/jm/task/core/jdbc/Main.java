@@ -1,5 +1,6 @@
 package jm.task.core.jdbc;
 
+import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
 
@@ -7,15 +8,23 @@ import java.sql.SQLException;
 
 public class Main {
     private static final UserService userService = new UserServiceImpl();
+    private static final User user1 = new User("ИВАН", "ИВАНОВ", (byte) 10);
+    private static final User user2 = new User("ПЕТР", "ПЕТРОВ", (byte) 20);
+    private static final User user3 = new User("АНТОН", "АНТОНОВ", (byte) 30);
+    private static final User user4 = new User("КИРИЛЛ", "МАКСИМОВ", (byte) 40);
+
     public static void main(String[] args) throws SQLException {
         userService.createUsersTable();
 
-        userService.saveUser("ИВАН", "ИВАНОВ", (byte) 10);
-        userService.saveUser("СЕМЕН", "СЕМЕНОВ", (byte) 20);
-        userService.saveUser("ДАНИЛ", "ДАНИЛОВ", (byte) 40);
-        userService.saveUser("КИРИЛЛ", "ПЕТРОВ", (byte) 60);
 
-        userService.removeUserById(2);
+        userService.saveUser(user1.getName(), user1.getLastName(), user1.getAge());
+
+
+        userService.saveUser(user2.getName(), user2.getLastName(), user2.getAge());
+
+        userService.saveUser(user3.getName(), user3.getLastName(), user3.getAge());
+
+        userService.saveUser(user4.getName(), user4.getLastName(), user4.getAge());
 
         userService.getAllUsers();
 
